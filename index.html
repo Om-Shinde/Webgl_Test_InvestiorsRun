@@ -14,7 +14,7 @@
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=1260 height=2800></canvas>
+      <canvas id="unity-canvas" width=1920 height=1200></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -56,11 +56,11 @@
       }
       
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/default__template_iqoo_res_jio_template.loader.js";
+      var loaderUrl = buildUrl + "/1920_1200.loader.js";
       var config = {
-        dataUrl: buildUrl + "/default__template_iqoo_res_jio_template.data.unityweb",
-        frameworkUrl: buildUrl + "/default__template_iqoo_res_jio_template.framework.js.unityweb",
-        codeUrl: buildUrl + "/default__template_iqoo_res_jio_template.wasm.unityweb",
+        dataUrl: buildUrl + "/1920_1200.data.unityweb",
+        frameworkUrl: buildUrl + "/1920_1200.framework.js.unityweb",
+        codeUrl: buildUrl + "/1920_1200.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Ready Wealth",
         productName: "Investor Run",
@@ -76,8 +76,8 @@
           warningBanner.style.display = "none";
         }, 5000);
       } else {
-        canvas.style.width = "1260px";
-        canvas.style.height = "2800px";
+        canvas.style.width = "1920px";
+        canvas.style.height = "1200px";
       }
 
       loadingBar.style.display = "block";
