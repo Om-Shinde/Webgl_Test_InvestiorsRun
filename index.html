@@ -13,8 +13,12 @@
     <script src="JioGamesWebSDK/jiogames_sp_wrapper.js"></script>
   
     <style>
+      html, body, #unity-container { height: 100%; margin: 0; }
       #unity-canvas {
         image-rendering: auto !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: block;
       }
     </style>
 
@@ -65,6 +69,8 @@
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/JioBuild_V5.loader.js";
       var config = {
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+        webglContextAttributes: { antialias: true, alpha: false, preserveDrawingBuffer: false },
         dataUrl: buildUrl + "/JioBuild_V5.data.unityweb",
         frameworkUrl: buildUrl + "/JioBuild_V5.framework.js.unityweb",
         codeUrl: buildUrl + "/JioBuild_V5.wasm.unityweb",
@@ -88,6 +94,23 @@
       }
 
       loadingBar.style.display = "block";
+
+      function resizeCanvasToDisplaySize(canvas, dpr) {
+        const cssWidth = Math.round(canvas.clientWidth);
+        const cssHeight = Math.round(canvas.clientHeight);
+        const desiredWidth = Math.round(cssWidth * dpr);
+        const desiredHeight = Math.round(cssHeight * dpr);
+        if (canvas.width !== desiredWidth || canvas.height !== desiredHeight) {
+          canvas.width = desiredWidth;
+          canvas.height = desiredHeight;
+          return true;
+        }
+        return false;
+      }
+      var DPR = Math.min(window.devicePixelRatio || 1, 2);
+      resizeCanvasToDisplaySize(canvas, DPR);
+      window.addEventListener('resize', () => resizeCanvasToDisplaySize(canvas, DPR));
+
 
       var script = document.createElement("script");
       script.src = loaderUrl;
