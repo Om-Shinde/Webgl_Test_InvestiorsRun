@@ -6,42 +6,35 @@
 <title>%PRODUCT_NAME%</title>
 <style>
   html,body { height:100%; margin:0; background:#111; }
-  /* Center the game; the leftover becomes bars on desktop */
   #wrap { position:fixed; inset:0; display:grid; place-items:center; background:#111; }
   #unity-canvas { display:block; background:#000; }
-  /* Optional “rotate” overlay for phones in landscape */
   #rotate { position:fixed; inset:0; display:none; align-items:center; justify-content:center;
             background:#111; color:#fff; font:600 18px system-ui; }
-  @media (orientation:landscape) and (max-width: 900px) { #rotate { display:flex; } }
+  @media (orientation:landscape) and (max-width:900px) { #rotate { display:flex; } }
 </style>
 </head>
 <body>
-  <div id="wrap">
-    <canvas id="unity-canvas"></canvas>
-  </div>
+  <div id="wrap"><canvas id="unity-canvas"></canvas></div>
   <div id="rotate">Please rotate your device</div>
 
   <script src="%UNITY_WEBGL_LOADER_URL%"></script>
   <script>
-    // --- Portrait design resolution (kept constant for crisp UI) ---
+    // --- Portrait letterboxing: keep render res fixed, scale via CSS ---
     const DESIGN_W = 1080, DESIGN_H = 1920;
     const canvas = document.getElementById('unity-canvas');
-
-    function sizeCanvas() {
-      const ww = window.innerWidth, wh = window.innerHeight;
-      const scale = Math.min(ww / DESIGN_W, wh / DESIGN_H);
-      canvas.style.width  = Math.round(DESIGN_W * scale) + 'px';
-      canvas.style.height = Math.round(DESIGN_H * scale) + 'px';
-      // Render resolution stays at design size (sharp UI, predictable layout)
-      canvas.width  = DESIGN_W;
+    function resize(){
+      const s = Math.min(innerWidth / DESIGN_W, innerHeight / DESIGN_H);
+      canvas.style.width  = Math.round(DESIGN_W * s) + 'px';
+      canvas.style.height = Math.round(DESIGN_H * s) + 'px';
+      canvas.width  = DESIGN_W;   // crisp UI
       canvas.height = DESIGN_H;
     }
-    addEventListener('resize', sizeCanvas, {passive:true});
-    addEventListener('orientationchange', sizeCanvas, {passive:true});
-    sizeCanvas();
+    addEventListener('resize', resize, { passive:true });
+    addEventListener('orientationchange', resize, { passive:true });
+    resize();
 
-    // Unity boot (keep matchWebGLToCanvasSize false so render res stays DESIGN_W×DESIGN_H)
-    createUnityInstance(canvas, {
+    // Build a config object without Unity #if/#endif directives (VS Code friendly)
+    const cfg = {
       dataUrl: "%UNITY_WEBGL_DATA_URL%",
       frameworkUrl: "%UNITY_WEBGL_FRAMEWORK_URL%",
       codeUrl: "%UNITY_WEBGL_CODE_URL%",
@@ -50,7 +43,15 @@
       productName: "%PRODUCT_NAME%",
       productVersion: "%PRODUCT_VERSION%",
       matchWebGLToCanvasSize: false
-    });
+    };
+    (function attachOptionalFiles(){
+      var mem = "%UNITY_WEBGL_MEMORY_URL%";
+      var sym = "%UNITY_WEBGL_SYMBOLS_URL%";
+      if (mem && mem !== "%UNITY_WEBGL_MEMORY_URL%") cfg.memoryUrl = mem;
+      if (sym && sym !== "%UNITY_WEBGL_SYMBOLS_URL%") cfg.symbolsUrl = sym;
+    })();
+
+    createUnityInstance(canvas, cfg);
   </script>
 </body>
 </html>
